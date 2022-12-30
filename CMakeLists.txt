@@ -12,3 +12,8 @@ set_target_properties(StreamPacketParser PROPERTIES
     CXX_EXTENSIONS OFF POSITION_INDEPENDENT_CODE ON)
 target_include_directories(StreamPacketParser PUBLIC
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>")
+
+option(SPP_BUILD_EXAMPLES "Build the console example" OFF)
+if(SPP_BUILD_EXAMPLES)
+    add_subdirectory(examples/console)
+endif()
