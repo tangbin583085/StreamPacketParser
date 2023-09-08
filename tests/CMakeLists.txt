@@ -1,4 +1,4 @@
-foreach(test_name IN ITEMS parser_stream parser_recovery parser_lengths parser_lifecycle)
+foreach(test_name IN ITEMS parser_stream parser_recovery parser_lengths parser_lifecycle parser_limits)
     add_executable(spp_test_${test_name} ${test_name}.cpp)
     target_link_libraries(spp_test_${test_name} PRIVATE StreamPacketParser::StreamPacketParser)
     add_test(NAME spp.${test_name} COMMAND spp_test_${test_name})
