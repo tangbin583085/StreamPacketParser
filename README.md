@@ -1,11 +1,16 @@
 # StreamPacketParser.NET
 
-一个简单的 C# 流式拆包库，用于处理通信数据中的半包和粘包。
+一个用 C# 写的小型流式拆包库，主要处理半包、粘包、噪声和长度字段协议。
 
-目前先支持固定帧头和长度字段协议，其他功能后续再补。
+## 目前支持
 
-## Build
+- 固定帧头和长度字段
+- 大端和小端长度
+- XOR及CRC16-Modbus校验
+- 非法数据后的重新同步
 
-```shell
-dotnet build StreamPacketParser.sln
-```
+## English
+
+StreamPacketParser.NET is a small C# library for splitting an incoming byte stream into complete protocol frames.
+
+It supports partial frames, combined frames, configurable length fields, and basic checksum validation.
