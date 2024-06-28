@@ -51,7 +51,7 @@ public sealed class PacketParser
                 _buffer.Discard(1);
                 diagnostics.Add(new ParserDiagnostic(
                     ParserDiagnosticCode.BufferLimitExceeded,
-                    "缓存已达到上限，解析器丢弃了一个字节以继续向前处理。",
+                    "缓存达到上限，已丢弃一个字节继续解析。",
                     discardedByteCount: 1));
                 continue;
             }
