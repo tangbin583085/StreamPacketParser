@@ -237,11 +237,11 @@ public sealed class PacketParserOptions
                 nameof(fixedFrameOverhead));
         }
 
-        if (payloadOffset is < 0)
+        if (payloadOffset is < 0 || payloadOffset > minFrameLength)
         {
             throw new ArgumentOutOfRangeException(
                 nameof(payloadOffset),
-                "PayloadOffset必须位于最小帧边界之内。");
+                "PayloadOffset不能超过最小帧长度。");
         }
     }
 }
