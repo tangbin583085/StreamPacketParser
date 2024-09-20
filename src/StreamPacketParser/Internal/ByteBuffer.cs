@@ -25,7 +25,7 @@ internal sealed class ByteBuffer
         int required = checked(Count + data.Length);
         if (required > maximumCapacity)
         {
-            throw new ArgumentOutOfRangeException(nameof(data), "这段数据放不进当前受限缓存。");
+            throw new ArgumentOutOfRangeException(nameof(data), "追加数据超出了当前缓存上限。");
         }
 
         EnsureCapacity(required, maximumCapacity);
