@@ -1,0 +1,17 @@
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
+if(QT_VERSION_MAJOR EQUAL 5 AND Qt5Core_VERSION VERSION_LESS 5.15)
+    message(FATAL_ERROR "The Qt examples require Qt 5.15 or Qt 6")
+endif()
+if(SPP_BUILD_QT_TCP_EXAMPLE)
+    find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Network)
+    add_executable(spp_qt_tcp tcp_main.cpp)
+    target_link_libraries(spp_qt_tcp PRIVATE StreamPacketParser::StreamPacketParser
+        Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Network)
+endif()
+if(SPP_BUILD_QT_SERIAL_EXAMPLE)
+    find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS SerialPort)
+    add_executable(spp_qt_serial serial_main.cpp)
+    target_link_libraries(spp_qt_serial PRIVATE StreamPacketParser::StreamPacketParser
+        Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::SerialPort)
+endif()
