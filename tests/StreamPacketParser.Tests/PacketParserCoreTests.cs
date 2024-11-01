@@ -210,7 +210,7 @@ public sealed class PacketParserCoreTests
         PacketParseResult result = parser.Append(noise);
 
         Assert.Empty(result.Packets);
-        Assert.True(parser.BufferedByteCount <= 64);
+        Assert.InRange(parser.BufferedByteCount, 0, 64);
         Assert.Contains(result.Diagnostics, item => item.Code == ParserDiagnosticCode.NoiseDiscarded);
     }
 
