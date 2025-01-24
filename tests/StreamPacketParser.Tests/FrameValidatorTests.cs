@@ -86,6 +86,13 @@ public sealed class FrameValidatorTests
     }
 
     [Fact]
+    public void Crc16ModbusValidator_InvalidChecksumOffset_Throws()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => new Crc16ModbusValidator(
+            checksumOffsetFromEnd: 1));
+    }
+
+    [Fact]
     public void PacketParser_ValidCrcFrame_ReturnsPacket()
     {
         PacketParser parser = CreateCrcParser();
