@@ -15,11 +15,11 @@ add_library(StreamPacketParser::StreamPacketParser ALIAS StreamPacketParser)
 target_compile_features(StreamPacketParser PUBLIC cxx_std_17)
 set_target_properties(StreamPacketParser PROPERTIES
     CXX_EXTENSIONS OFF POSITION_INDEPENDENT_CODE ON)
-target_include_directories(StreamPacketParser PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>)
-
 include(GNUInstallDirs)
+target_include_directories(StreamPacketParser PUBLIC
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
+
 include(CMakePackageConfigHelpers)
 install(TARGETS StreamPacketParser EXPORT StreamPacketParserTargets
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
