@@ -6,6 +6,10 @@ int main() {
         CHECK(empty.empty() && empty.begin() == empty.end());
         CHECK(empty.subview(0, 0).empty());
         expect_throw<std::invalid_argument>([] { spp::ByteView view(nullptr, 1); });
+        const std::uint8_t byte = 0;
+        expect_throw<std::length_error>([&] {
+            spp::ByteView view(&byte, std::numeric_limits<std::size_t>::max());
+        });
         const spp::Bytes bytes{1, 2, 3};
         const spp::ByteView view(bytes);
         CHECK(view.size() == 3 && view[1] == 2);

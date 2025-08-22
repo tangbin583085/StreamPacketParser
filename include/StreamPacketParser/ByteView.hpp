@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <limits>
 #include <stdexcept>
 #include <vector>
 
@@ -14,6 +15,8 @@ public:
     ByteView() noexcept = default;
     ByteView(const std::uint8_t* data, std::size_t size) : data_(data), size_(size) {
         if (!data && size != 0) throw std::invalid_argument("null data with nonzero size");
+        if (size > static_cast<std::size_t>(std::numeric_limits<std::ptrdiff_t>::max()))
+            throw std::length_error("byte view exceeds supported iterator range");
     }
     explicit ByteView(const Bytes& bytes) : ByteView(bytes.data(), bytes.size()) {}
     const std::uint8_t* data() const noexcept { return data_; }
