@@ -1,7 +1,26 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>StreamPacketParser</RootNamespace>
     <AssemblyName>StreamPacketParser</AssemblyName>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+    <PackageId>StreamPacketParser</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>tangbin</Authors>
+    <Title>StreamPacketParser.NET</Title>
+    <Description>一个与传输方式无关的.NET流式二进制拆包库。</Description>
+    <PackageTags>binary;protocol;packet;stream;serial;tcp;ble</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/tangbin583085/StreamPacketParser</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/tangbin583085/StreamPacketParser</PackageProjectUrl>
+    <PackageReleaseNotes>首个版本，包含流式拆包、诊断、XOR和CRC16-Modbus校验。</PackageReleaseNotes>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../../README.md" Pack="true" PackagePath="/" />
+  </ItemGroup>
 </Project>
