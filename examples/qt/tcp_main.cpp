@@ -1,6 +1,8 @@
 #include "ReceiveBytes.hpp"
 #include <QCoreApplication>
 #include <QTcpSocket>
+#include <QStringList>
+#include <QTimer>
 #include <exception>
 
 int main(int argc, char** argv) {
@@ -18,6 +20,7 @@ int main(int argc, char** argv) {
     }
     spp::PacketParser parser(demo::options());
     QTcpSocket socket;
+    int exit_code = 0;
     socket.setReadBufferSize(64 * 1024);
     QObject::connect(&socket, &QTcpSocket::connected, &socket, [&] {
         parser.reset();
@@ -27,21 +30,24 @@ int main(int argc, char** argv) {
         try { receive_bytes(socket, parser); }
         catch (const std::exception& error) {
             qCritical() << "Receive failed:" << error.what();
+            exit_code = 1;
             parser.reset();
             socket.abort();
-            app.exit(1);
+            app.exit(exit_code);
         }
     });
     QObject::connect(&socket, &QTcpSocket::disconnected, &socket, [&] {
         parser.reset();
-        app.quit();
+        app.exit(exit_code);
     });
     QObject::connect(&socket, &QTcpSocket::errorOccurred, &socket,
                      [&](QAbstractSocket::SocketError) {
         qCritical() << socket.errorString();
+        exit_code = 1;
         parser.reset();
-        app.exit(1);
+        app.exit(exit_code);
     });
-    socket.connectToHost(args[1], port);
+    // Start after the event loop so an immediate connection error can exit it.
+    QTimer::singleShot(0, &socket, [&] { socket.connectToHost(args[1], port); });
     return app.exec();
 }
