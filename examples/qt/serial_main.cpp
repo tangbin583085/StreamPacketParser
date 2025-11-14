@@ -1,6 +1,7 @@
 #include "ReceiveBytes.hpp"
 #include <QCoreApplication>
 #include <QSerialPort>
+#include <QStringList>
 #include <exception>
 
 int main(int argc, char** argv) {
