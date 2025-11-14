@@ -28,8 +28,8 @@ byte[][] incomingChunks =
     secondFrame[3..],
 ];
 
-Console.WriteLine("StreamPacketParser sample");
-Console.WriteLine("Feed a few chunks into the parser.");
+Console.WriteLine("StreamPacketParser.NET Console示例");
+Console.WriteLine("同一条字节流会被拆成带噪声的片段、半帧和粘包片段依次送入解析器。");
 
 for (int index = 0; index < incomingChunks.Length; index++)
 {
