@@ -39,6 +39,19 @@ int main() {
         }
         CHECK(found_exception);
 
+        options.validator = [calls = 0](spp::ByteView) mutable -> spp::ValidationResult {
+            if (calls++ == 0) throw 42;
+            return {};
+        };
+        spp::PacketParser non_standard(options);
+        result = non_standard.append(joined(good, good));
+        CHECK(result.packets.size() == 1 && result.packets[0].raw_data == good);
+        CHECK(has_diagnostic(result, spp::DiagnosticCode::validator_exception));
+        for (const auto& diagnostic : result.diagnostics) {
+            if (diagnostic.code == spp::DiagnosticCode::validator_exception)
+                expect_throw<int>([&] { std::rethrow_exception(diagnostic.exception); });
+        }
+
         // A header with a repeated prefix must retain the longest matching suffix.
         options = {};
         options.header = {0xAA, 0xAA, 0x55};
