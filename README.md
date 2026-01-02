@@ -134,3 +134,119 @@ examples/console/           普通 C++ 示例
 examples/qt/                Qt TCP、串口示例
 docs/                       协议与接入说明
 ```
+
+---
+
+## English
+
+StreamPacketParser is a small C++17 library for splitting binary streams into complete frames. It can be used with Qt TCP sockets, serial ports, or any source that delivers ordered bytes. A single receive event may contain part of a frame or several frames.
+
+The core has no Qt dependency. Device connections, commands, and UI updates stay in the application.
+
+### Features
+
+- Fixed headers and 1-, 2-, or 4-byte unsigned length fields in either byte order.
+- Payload-length and total-frame-length modes.
+- Partial frames, combined frames, noise recovery, and bounded pending input.
+- Optional XOR, CRC16-Modbus, or custom validation.
+- Owned frame and payload data, diagnostics, and an explicit reset operation.
+
+The public API is C++17; there is no plain C ABI. The Qt examples target Qt 5.15 and Qt 6.
+
+### Integration
+
+Add the source directory to a CMake project:
+
+```cmake
+add_subdirectory(third_party/StreamPacketParser)
+target_link_libraries(MyApp PRIVATE StreamPacketParser::StreamPacketParser)
+```
+
+With a C++17 compiler and CMake 3.16 or newer already installed, a standalone install is also available:
+
+```sh
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./install
+cmake --build build --config Release
+cmake --install build --config Release
+```
+
+Add the install prefix to `CMAKE_PREFIX_PATH` in your application, then use:
+
+```cmake
+find_package(StreamPacketParser 3.6 CONFIG REQUIRED)
+target_link_libraries(MyApp PRIVATE StreamPacketParser::StreamPacketParser)
+```
+
+No package-manager release is currently provided. See [Qt integration](docs/qt-integration.md) for qmake and Qt example instructions.
+
+### Usage
+
+The sample protocol is:
+
+```text
+AA 55 | Version(1) | Command(1) | PayloadLength(2, BE) | Payload(N) | CRC(2, LE)
+```
+
+```cpp
+#include <StreamPacketParser/StreamPacketParser.hpp>
+
+spp::PacketParserOptions options;
+options.payload_offset = 6;
+options.validator = spp::crc16_modbus_validator(2);
+spp::PacketParser parser(options);
+
+// Keep this parser alive between receive events.
+auto result = parser.append(data, size);
+for (const auto& packet : result.packets) {
+    handle_frame(packet.raw_data, packet.payload);
+}
+```
+
+Supply your received `data` pointer and byte `size`, and implement `handle_frame` in your application. Inspect `result.diagnostics` for discarded noise, invalid lengths, or failed validation.
+
+Defaults are header `AA 55`, a two-byte big-endian length field at offset 4, payload-length mode, eight bytes of fixed overhead, a 4096-byte maximum frame, and an 8192-byte pending-input limit. **Validation is disabled by default**; the example enables CRC explicitly. Its CRC covers bytes from offset 2 to the end of the payload.
+
+### Qt and ownership
+
+In a TCP or serial `readyRead` handler, pass the received `QByteArray` bytes to the same parser:
+
+```cpp
+const QByteArray bytes = device.readAll();
+auto result = parser.append(
+    reinterpret_cast<const std::uint8_t*>(bytes.constData()),
+    static_cast<std::size_t>(bytes.size()));
+```
+
+Use one parser per stream and call `reset()` when disconnecting or changing devices. Instances are neither thread-safe nor reentrant. Returned packets own their data, so later appends and resets do not invalidate them. Custom validators must not retain their borrowed `ByteView`.
+
+The complete TCP and serial examples read in chunks of up to 64 KiB. They receive and print frames; they do not provide a GUI or automatically send device commands.
+
+### Options and recovery
+
+In payload-length mode, frame size is the encoded length plus `fixed_frame_overhead`. Payload starts after the length field unless `payload_offset` is set.
+
+In total-frame-length mode, fixed overhead must be zero. Without an explicit payload offset, payload is empty. With one, it extends to the frame end, including any trailer.
+
+XOR and CRC validators accept a data start offset and a checksum position measured from the end. CRC byte order is configured separately from length byte order.
+
+Invalid settings throw `std::invalid_argument`. Invalid lengths, checksum failures, and validator exceptions produce diagnostics and advance by one byte before searching again. Partial frames and possible header suffixes remain buffered. A plausible but incorrect length can require an application timeout and `reset()`.
+
+The buffer limit covers pending input bytes, not all allocated memory or returned packets. Feed large streams in chunks and consume results promptly.
+
+### Examples and tests
+
+With the development tools available:
+
+```sh
+cmake -S . -B build -DSPP_BUILD_TESTS=ON -DSPP_BUILD_EXAMPLES=ON
+cmake --build build --config Debug
+(cd build && ctest -C Debug --output-on-failure)
+```
+
+The console target is `spp_console`. Tests cover chunk boundaries, length formats, checksums, recovery, buffer limits, and ownership without an external test framework. Qt examples are opt-in and never download Qt automatically.
+
+See [protocol](docs/sample-protocol.md), [architecture](docs/architecture.md), and [recovery](docs/error-recovery.md) for details.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
