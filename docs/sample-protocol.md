@@ -20,3 +20,16 @@ CRC 初值为 `0xFFFF`，反射多项式为 `0xA001`，无最终异或。
 
 解析器不会验证 Version 和 Command 的业务意义。如需要，可在自定义校验器中检查，
 或在收到完整帧后由业务层处理。TCP 和串口示例只接收符合此协议的帧。
+
+## English
+
+This is a demonstration format, not a vendor protocol. Total frame size is `8 + N`.
+The demo limits frames to 4096 bytes and payloads to 4088 bytes.
+
+CRC16-Modbus covers bytes from offset 2 through the payload. It starts at `0xFFFF`,
+uses the reflected polynomial `0xA001`, and has no final XOR.
+The check value for ASCII `123456789` is `0x4B37`. CRC byte order is independent
+of length byte order.
+
+Version and command semantics belong to the application. The Qt receivers expect this
+sample format; configure other layouts before connecting to a different device.
