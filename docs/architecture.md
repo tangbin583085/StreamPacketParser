@@ -36,3 +36,21 @@
 
 `reset()` 清空残留帧，配置不变。断线重连或更换协议时，
 分别使用重置或新建解析器。
+
+## English
+
+Input is consumed in stream order: find the header, decode length, wait for a complete
+candidate, validate it, and return an owned packet. Configuration is copied and validated
+at construction. Callback captures may still refer to caller-owned state.
+
+A sliding byte buffer avoids moving all remaining input after every rejected byte.
+Both raw frame and payload are copied into the result. Input views and validator views
+are borrowed only for the duration of their calls.
+
+The pending-byte limit is not a hard process-memory limit: vector capacity, returned
+packets, payload copies, and diagnostics use additional memory. Allocation failures
+propagate as standard exceptions. Stop/reset the session if the application cannot continue.
+
+Use one instance per stream, without concurrent or reentrant calls. Parse on the Qt
+device's thread and transfer owned results to other threads. Reset on a new session;
+construct a new parser when changing protocol settings.
