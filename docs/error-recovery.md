@@ -21,3 +21,16 @@
 长度看起来合法时，无法仅凭后面出现了帧头就认定前面是坏帧，
 因为 Payload 本身也可能包含帧头。对于没有后续字节的截断帧，
 由上位机设置接收超时，再调用 `reset()`。这里不内置计时器或设备重连逻辑。
+
+## English
+
+Noise is discarded while the longest possible header suffix is retained. Incomplete
+headers, fields, and frames wait for more input. A rejected length, failed checksum,
+or throwing validator advances the search by one byte, preserving potential nested headers.
+
+The buffer-full case is a defensive fallback: valid settings already ensure the largest
+frame fits in the pending buffer. Large input calls are consumed in chunks.
+
+A plausible length cannot be rejected just because another header appears later:
+payloads may contain that same byte sequence. The application owns timeouts and should
+reset an abandoned partial frame when starting a new session.
