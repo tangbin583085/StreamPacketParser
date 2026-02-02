@@ -56,3 +56,19 @@ TCP 示例接收参数：`spp_qt_tcp <host> <port>`。
 示例在断线或设备错误时重置并退出，没有自动重连。应用自己实现重连时，
 必须在新会话开始前清空解析器缓存。接收超时也由应用决定，
 不要把前一台设备的残留数据传给下一台设备。
+
+## English
+
+Link the CMake target or add the four core source files to a qmake project with
+`CONFIG += c++17`. Enable C++ exceptions. Add Qt Network or SerialPort only in the
+application that uses it; the core itself has no Qt dependency.
+
+Build the supplied receivers with `SPP_BUILD_QT_TCP_EXAMPLE` and/or
+`SPP_BUILD_QT_SERIAL_EXAMPLE`. They require an existing Qt 5.15 or Qt 6 installation.
+Run `spp_qt_tcp host port` or `spp_qt_serial port-name [baud-rate]` against a sender
+using the sample protocol. Serial defaults are 115200 baud, 8N1, no flow control.
+
+Both examples are receive-only command-line applications. They read bounded chunks,
+report diagnostics, and print payloads. Keep the parser on the device thread; transfer
+owned packets when crossing threads. Reset on timeout or session changes. The examples
+exit on disconnect/error; automatic reconnect belongs in the host application.
