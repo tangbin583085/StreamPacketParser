@@ -241,7 +241,7 @@ public sealed class PacketParserOptions
         {
             throw new ArgumentOutOfRangeException(
                 nameof(payloadOffset),
-                "PayloadOffset不能超过最小帧长度。");
+                "PayloadOffset必须位于最小帧边界之内。");
         }
     }
 }
