@@ -11,3 +11,11 @@
 - README、示例字段、版本号和 CMake 导出目标保持一致。
 
 该清单是验证步骤，不代表已经执行或通过。
+
+## English
+
+Build the core with C++17, run CTest in Debug and Release, try the console example,
+and verify an installed-package consumer. Check Qt TCP and serial examples in the
+Qt environments you support, including reconnect/session reset behavior.
+
+These are checks to perform, not a claim that they have passed.
