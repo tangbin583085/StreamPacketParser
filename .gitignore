@@ -7,3 +7,5 @@ CMakeUserPresets.json
 .DS_Store
 .vscode/
 .idea/
+/Testing/
+/test-results/
